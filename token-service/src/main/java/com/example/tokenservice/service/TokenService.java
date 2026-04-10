@@ -1,5 +1,7 @@
 package com.example.tokenservice.service;
 
+import com.example.tokenservice.common.ResultCode;
+import com.example.tokenservice.exception.TokenException;
 import com.example.tokenservice.model.TokenInfo;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,10 @@ public class TokenService {
     private static final long DEFAULT_EXPIRE_TIME = 3600000;
 
     public TokenInfo generateToken(String userId) {
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new TokenException(ResultCode.USER_ID_EMPTY);
+        }
+        
         String token = UUID.randomUUID().toString().replace("-", "");
         long createTime = System.currentTimeMillis();
         long expireTime = createTime + DEFAULT_EXPIRE_TIME;
@@ -26,42 +32,44 @@ public class TokenService {
     }
 
     public TokenInfo validateToken(String token) {
-        if (token == null || token.isEmpty()) {
-            return null;
+        if (token == null || token.trim().isEmpty()) {
+            throw new TokenException(ResultCode.TOKEN_EMPTY);
         }
         
         TokenInfo tokenInfo = tokenStore.get(token);
         
         if (tokenInfo == null) {
-            return null;
+            throw new TokenException(ResultCode.TOKEN_INVALID);
         }
         
         if (!tokenInfo.isValid()) {
-            return null;
+            throw new TokenException(ResultCode.TOKEN_INVALIDATED);
         }
         
         if (System.currentTimeMillis() > tokenInfo.getExpireTime()) {
             tokenStore.remove(token);
-            return null;
+            throw new TokenException(ResultCode.TOKEN_EXPIRED);
         }
         
         return tokenInfo;
     }
 
-    public boolean invalidateToken(String token) {
-        if (token == null || token.isEmpty()) {
-            return false;
+    public void invalidateToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new TokenException(ResultCode.TOKEN_EMPTY);
         }
         
         TokenInfo tokenInfo = tokenStore.get(token);
         
         if (tokenInfo == null) {
-            return false;
+            throw new TokenException(ResultCode.TOKEN_INVALID);
+        }
+        
+        if (!tokenInfo.isValid()) {
+            throw new TokenException(ResultCode.TOKEN_INVALIDATED);
         }
         
         tokenInfo.setValid(false);
         tokenStore.remove(token);
-        
-        return true;
     }
 }
