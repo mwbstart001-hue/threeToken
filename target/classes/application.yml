@@ -1,0 +1,11 @@
+server:
+  port: 8080
+
+jwt:
+  secret: ${JWT_SECRET:}
+  expiration: 3600000
+  refresh-expiration: 86400000
+
+logging:
+  level:
+    com.example.tokenservice: INFO
