@@ -1,0 +1,11 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: token-service
+
+token:
+  security:
+    expire-time: 3600000
+    issuer: token-service
