@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: token-service
+
+jwt:
+  secret: vLs19T9cATx+4JnQ7xX5ePmIq2pRz8uD0fA3dB6hG7k=
+  expiration: 3600000
