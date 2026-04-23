@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: token-service
+
+token:
+  default-expire-minutes: 120
+  refresh-window-minutes: 60
